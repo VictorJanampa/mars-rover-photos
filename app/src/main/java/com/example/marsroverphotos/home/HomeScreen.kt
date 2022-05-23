@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.data.models.PhotoEntity
+import com.example.data.models.PhotoRoomModel
 import com.example.marsroverphotos.dataExample
 import com.example.marsroverphotos.ui.theme.MarsRoverPhotosTheme
 import com.example.marsroverphotos.ui.theme.RedMars500
@@ -89,20 +89,20 @@ fun PhotoCard(
 }
 
 @Composable
-fun GridItem(data: PhotoEntity) {
+fun GridItem(data: PhotoRoomModel) {
     PhotoCard(
         modifier = Modifier
             .padding(8.dp)
             .aspectRatio(1f)
             .fillMaxWidth(),
-        imageUrl = data.img_src,
+        imageUrl = data.imgSrc,
         id = data.id.toInt(),
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotosLazyGrid(dataList: List<PhotoEntity>){
+fun PhotosLazyGrid(dataList: List<PhotoRoomModel>){
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
         contentPadding = PaddingValues(4.dp)
@@ -123,7 +123,7 @@ fun PhotoCardPreview() {
                 .padding(8.dp)
                 .fillMaxWidth()
                 .aspectRatio(1f),
-            dataExample[1].img_src,
+            dataExample[1].imgSrc,
             dataExample[1].id.toInt(),
         )
     }

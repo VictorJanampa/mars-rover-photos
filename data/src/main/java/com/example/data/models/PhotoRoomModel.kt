@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "photo_table")
-data class PhotoEntity(
+data class PhotoRoomModel(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     @ColumnInfo(name = "sol")
@@ -16,9 +16,9 @@ data class PhotoEntity(
     @ColumnInfo(name = "camera")
     val camera: String,
     @ColumnInfo(name = "img_src")
-    val img_src: String,
+    val imgSrc: String,
     @ColumnInfo(name = "earth_date")
-    val earth_date: String,
+    val earthDate: String,
     @ColumnInfo(name = "String")
     val rover: String
 ) : Parcelable

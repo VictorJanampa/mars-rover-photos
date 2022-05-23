@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import com.example.data.models.PhotoEntity
+import com.example.data.models.PhotoRoomModel
 import com.example.marsroverphotos.home.HomeScreen
 import com.example.marsroverphotos.ui.theme.MarsRoverPhotosTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-val dataExample = mutableListOf(PhotoEntity(
+val dataExample = mutableListOf(PhotoRoomModel(
     102693,
     1000,
     "FHAZ",
@@ -19,7 +19,7 @@ val dataExample = mutableListOf(PhotoEntity(
     "2015-05-30",
     "Curiosity"
 ),
-    PhotoEntity(
+    PhotoRoomModel(
     102694,
     1000,
     "FHAZ",
