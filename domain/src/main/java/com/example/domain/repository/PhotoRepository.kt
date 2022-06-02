@@ -1,8 +1,11 @@
 package com.example.domain.repository
 
+import com.example.domain.models.Photo
 import kotlinx.coroutines.flow.Flow
 
-interface PhotoRepository<T: Any> {
-    suspend fun insertPhoto(photo: T)
-    suspend fun getPhotos(): Flow<List<T>>
+interface PhotoRepository {
+    suspend fun insertPhoto(photo: Photo)
+    fun getPhotos(): Flow<List<Photo>>
+    suspend fun cleanDatabase()
+    suspend fun filterPhotos(cameraName: String)
 }

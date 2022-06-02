@@ -23,33 +23,56 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.data.models.PhotoRoomModel
-import com.example.marsroverphotos.dataExample
+import com.example.data.models.CameraType
+import com.example.domain.models.Photo
+import com.example.marsroverphotos.Screen
 import com.example.marsroverphotos.ui.theme.MarsRoverPhotosTheme
 import com.example.marsroverphotos.ui.theme.RedMars500
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
-fun HomeScreen (viewModel: HomeViewModel = hiltViewModel()){
-    HomeScreenContent(state = viewModel.homeState)
+fun HomeScreen (
+    viewModel: HomeViewModel = hiltViewModel(),
+                navController: NavHostController
+){
+    HomeScreenContent(state = viewModel.homeState, navController = navController)
 }
 
 @Composable
-fun HomeScreenContent(state: HomeUiState){
+fun HomeScreenContent(state: HomeUiState, navController: NavHostController){
     val photos by state.photosValue.collectAsState()
-    PhotosLazyGrid(dataList = photos)
+    val selectedChip by state.selectedChip.collectAsState()
+    Column(Modifier) {
+        FilterChipRow(
+            items = CameraType.values(),
+            modifier = Modifier.padding(8.dp),
+            chipModifier = Modifier.padding(end = 8.dp),
+            onClickChip = state.onSelectedChip,
+            selectedChip = selectedChip
+        )
+        PhotosLazyGrid(dataList = photos, navController = navController)
+    }
+
 }
 
 @Composable
 fun PhotoCard(
+    photo: Photo,
     modifier: Modifier,
-    imageUrl: String,
-    id: Int
+    navController: NavHostController
 ){
     Card(
         modifier = modifier
-            .clickable { },
+            .clickable {
+                val encodedUrl = URLEncoder.encode(photo.imgSrc, StandardCharsets.UTF_8.toString())
+                navController.navigate(
+                    Screen.DetailScreen.withArgs(photo.sol,encodedUrl,photo.cameraName, photo.roverName)
+               )
+            },
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -59,7 +82,7 @@ fun PhotoCard(
                 painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
                         .crossfade(true)
-                        .data(imageUrl)
+                        .data(photo.imgSrc)
                         .build()
                 ),
                 contentDescription = null,
@@ -73,7 +96,7 @@ fun PhotoCard(
                 modifier = Modifier.fillMaxSize()
             ){
                 Text(
-                    text = id.toString(),
+                    text = photo.id.toString(),
                     style = TextStyle(
                         color = RedMars500,
                         fontStyle = FontStyle.Italic,
@@ -89,26 +112,26 @@ fun PhotoCard(
 }
 
 @Composable
-fun GridItem(data: PhotoRoomModel) {
+fun GridItem(photo: Photo, navController: NavHostController) {
     PhotoCard(
         modifier = Modifier
             .padding(8.dp)
             .aspectRatio(1f)
             .fillMaxWidth(),
-        imageUrl = data.imgSrc,
-        id = data.id.toInt(),
+        photo = photo,
+        navController = navController
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotosLazyGrid(dataList: List<PhotoRoomModel>){
+fun PhotosLazyGrid(dataList: List<Photo>, navController: NavHostController){
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
         contentPadding = PaddingValues(4.dp)
     ){
         items(count = dataList.size){ index ->
-            GridItem(data = dataList[index])
+            GridItem(photo = dataList[index], navController = navController)
         }
     }
 }
@@ -118,13 +141,6 @@ fun PhotosLazyGrid(dataList: List<PhotoRoomModel>){
 @Composable
 fun PhotoCardPreview() {
     MarsRoverPhotosTheme {
-        PhotoCard(
-            Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f),
-            dataExample[1].imgSrc,
-            dataExample[1].id.toInt(),
-        )
+
     }
 }

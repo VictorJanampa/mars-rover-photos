@@ -67,5 +67,5 @@ object ApiModule {
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule{
     @Binds
-    abstract fun bindRepository(impl: PhotoRepositoryImpl): PhotoRepository<PhotoRoomModel>
+    abstract fun bindRepository(impl: PhotoRepositoryImpl): PhotoRepository
 }

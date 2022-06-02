@@ -5,28 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.data.models.PhotoRoomModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.domain.models.Photo
+import com.example.marsroverphotos.details.DetailScreen
 import com.example.marsroverphotos.home.HomeScreen
 import com.example.marsroverphotos.ui.theme.MarsRoverPhotosTheme
 import dagger.hilt.android.AndroidEntryPoint
-
-val dataExample = mutableListOf(PhotoRoomModel(
-    102693,
-    1000,
-    "FHAZ",
-    "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01000/opgs/edr/fcam/FLB_486265257EDR_F0481570FHAZ00323M_.JPG",
-    "2015-05-30",
-    "Curiosity"
-),
-    PhotoRoomModel(
-    102694,
-    1000,
-    "FHAZ",
-    "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01000/opgs/edr/fcam/FRB_486265257EDR_F0481570FHAZ00323M_.JPG",
-    "2015-05-30",
-    "Curiosity"
-),)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -39,11 +29,45 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier,
                     color = MaterialTheme.colors.background
                 ) {
-                    HomeScreen()
+                    Navigation()
                 }
             }
         }
     }
 }
 
-
+@Composable
+fun Navigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route){
+        composable(route = Screen.HomeScreen.route){
+            HomeScreen(navController = navController)
+        }
+        composable(
+            route = "${Screen.DetailScreen.route}/{sol}/{imgSrc}/{cameraName}/{roverName}",
+            arguments = listOf(
+                navArgument("sol"){
+                    type = NavType.IntType
+                },
+                navArgument("imgSrc"){
+                    type = NavType.StringType
+                },navArgument("cameraName"){
+                    type = NavType.StringType
+                },navArgument("roverName"){
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+        DetailScreen(
+            Photo(
+                0,
+                entry.arguments?.getInt("sol", 0) ?: 0,
+                entry.arguments?.getString("cameraName","") ?: "" ,
+                entry.arguments?.getString("imgSrc","") ?: "" ,
+                "" ,
+                entry.arguments?.getString("roverName","") ?: "" ,
+                )
+            )
+        }
+    }
+}
